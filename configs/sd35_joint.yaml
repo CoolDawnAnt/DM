@@ -1,0 +1,49 @@
+model:
+  pretrained_model: stabilityai/stable-diffusion-3.5-medium
+  resolution: 512
+  dtype: bfloat16
+  gradient_checkpointing: true
+lora:
+  rank: 64
+  alpha: 128
+data:
+  train_prompts: prompts/pickscore_train.txt
+  eval_prompts: prompts/pickscore_test.txt
+  prompt_groups_per_rank: 6
+  samples_per_prompt: 24
+sampling:
+  student_steps: 4
+  teacher_guidance: 4.5
+  shift: 3.0
+  sample_batch_size: 24
+reward:
+  enabled: true
+  pickscore: 1.0
+  hpsv2: 1.0
+  clipscore: 1.0
+  batch_size: 32
+method:
+  mode: joint
+  reward_schedule: const:3
+  distill_schedule: steps:1,1,0,49
+  reward_base: posterior
+  score_steps: 5
+  clamp_score_index: 2
+  center_displacement: true
+  normalize_displacement: true
+  displacement_ema: 0.99
+  displacement_scale: 0.0
+  displacement_clip: 2.0
+  advantage_clip: 5.0
+  distill_beta: 1.0
+  kl_base: 0.0001
+  kl_anchor: 0.0
+train:
+  output_dir: outputs/sd35_joint
+  max_steps: 1200
+  checkpoint_every: 50
+  train_batch_size: 24
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  max_grad_norm: 1.0
+  seed: 42
